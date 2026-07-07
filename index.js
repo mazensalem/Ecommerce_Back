@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json())
 
 app.use('/user', require('./users/user.route'));
-
+app.use('/address', require('./address/address.routes'));
 
 
 const appError = require('./utils/appError.util');

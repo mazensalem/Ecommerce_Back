@@ -23,10 +23,36 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res, next)=>{
     const {email, password} = req.body;
     const user = await User.findOne({email});
+    if (user.isDeleted){
+        return next(new AppError("This user is not found", 404));
+    }
+
     if (await bcrypt.compare(password, user.password)) {
         const token = jwt.sign({_id: user._id, email: user.email, name: user.name, phone: user.phone}, process.env.SECRETE_KEY, {expiresIn: process.env.TOKEN_EXPIRE});
         return res.status(200).json({"msg": "you loged in sucessfully", data: token});
     }
 
+
     next(new AppError("you entered a wrong credintials", 401));
+}
+
+exports.loginCheck = async (req, res, next) => {
+    try {
+        if (!req.headers.authorization){return next(new AppError("you must be logged in", 401));}
+        const token = req.headers.authorization.split(' ')[1];
+        const data = jwt.verify(token, process.env.SECRETE_KEY);
+        const user = await User.findById(data._id);
+        req.user = user;
+        next();
+    }catch (err){
+        next(new AppError("this token is invalid or expired", 401));
+    }
+}
+
+exports.profile = async (req, res, next) => {
+    const userProfile = await User.findById(req.user._id);
+    if (userProfile.isDeleted){
+        return next(new AppError("This user is not found", 404));
+    }
+    res.status(200).json({msg: "profile", data: userProfile});
 }
