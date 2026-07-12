@@ -56,3 +56,28 @@ exports.profile = async (req, res, next) => {
     }
     res.status(200).json({msg: "profile", data: userProfile});
 }
+
+exports.editprofile = async (req, res, next) => {
+    try {
+        const id = req.user._id;
+        const { name, email, phone, dateOfBirth } = req.body;
+        const user = await User.findByIdAndUpdate(id, {name, phone, dateOfBirth}, {returnDocument: 'after'});
+        res.status(200).json({msg: "user updated", data: user});
+    } catch (err) {
+        next(new AppError("this data is not valid", 400));
+    }
+}
+
+exports.changePassword = async (req, res, next) => {
+    const {oldPassword, newPassword} = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (await bcrypt.compare(oldPassword, user.password)){
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const updatedUser = await User.findByIdAndUpdate(user._id, {password: hashedPassword}, {returnDocument: "after"});
+        res.status(200).json({msg: "password updated", data: user});
+    }else{
+        next(new AppError("The old password is not correct", 401));
+    }
+
+}

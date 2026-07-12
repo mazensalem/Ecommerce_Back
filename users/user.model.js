@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true},
     dateOfBirth: {type: Date, required: true},
     isDeleted: {type: Boolean, default: false, required: true},
-    addresses: {type: [{type: mongoose.Types.ObjectId, ref: 'address'}], required: true}
 }, {timestamps: true});
 
 module.exports = mongoose.model('user', userSchema);
