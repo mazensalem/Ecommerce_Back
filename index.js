@@ -15,6 +15,7 @@ app.use('/products', require('./products/products.routes'));
 app.use('/catagory', require('./catagories/catagories.routes'));
 app.use('/subcatagory', require('./subcatagories/subcatagories.routes'));
 app.use('/admins', require('./admins/admins.routes'));
+app.use('/cart', require('./cart/cart.routes'));
 
 // const appError = require('./utils/appError.util');
 // app.use((req, res, next) => {
