@@ -12,7 +12,8 @@ app.use('/uploads', express.static('./uploads'));
 app.use('/user', require('./users/user.route'));
 app.use('/address', require('./address/address.routes'));
 app.use('/products', require('./products/products.routes'));
-app.use('/catagory', require('./catagories/catagories.routes'))
+app.use('/catagory', require('./catagories/catagories.routes'));
+app.use('/admins', require('./admins/admins.routes'));
 
 // const appError = require('./utils/appError.util');
 // app.use((req, res, next) => {

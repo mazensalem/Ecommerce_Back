@@ -24,6 +24,15 @@ exports.searchProducts = async (req, res) => {
     res.status(200).json({msg: "search results", data: products});
 }
 
+exports.getProduct = async (req, res, next) => {
+    const id = req.params.id;
+    const product = await Product.findById(id).populate('catagory');
+    if (!product) {
+        return next(new AppError("this product is not found", 404));
+    }
+    res.status(200).json({msg: "product found", data: product});
+}
+
 
 exports.addProduct = async (req, res) => {
     const {title, desc, price, stock, slug, newArrivals, mostPopular, catagory, subCatagory, isActive} = req.body;
