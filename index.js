@@ -13,6 +13,7 @@ app.use('/user', require('./users/user.route'));
 app.use('/address', require('./address/address.routes'));
 app.use('/products', require('./products/products.routes'));
 app.use('/catagory', require('./catagories/catagories.routes'));
+app.use('/subcatagory', require('./subcatagories/subcatagories.routes'));
 app.use('/admins', require('./admins/admins.routes'));
 
 // const appError = require('./utils/appError.util');

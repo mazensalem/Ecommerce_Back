@@ -28,7 +28,7 @@ exports.login = async (req, res, next)=>{
     }
 
     if (await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({_id: user._id, email: user.email, name: user.name, phone: user.phone}, process.env.SECRETE_KEY, {expiresIn: process.env.TOKEN_EXPIRE});
+        const token = jwt.sign({_id: user._id, email: user.email, name: user.name, phone: user.phone, role: "user"}, process.env.SECRETE_KEY, {expiresIn: process.env.TOKEN_EXPIRE});
         return res.status(200).json({"msg": "you loged in sucessfully", data: token});
     }
 

@@ -13,6 +13,15 @@ exports.getCatagories = async  (req, res) => {
     res.status(200).json({msg: 'catagories', data: catagories});
 }
 
+exports.getOneCatagory = async (req, res, next) => {
+    const id = req.params.id;
+    const catagory = await Catagory.findById(id);
+    if (!catagory){
+        return next(new AppError("this Catagory wasn't found", 404));
+    }
+    res.status(200).json({msg: 'catagory', data: catagory});
+}
+
 exports.createCatagory = async (req, res) => {
     const {name, slug, isActive} = req.body;
     const imgUrl = req.file ? req.file.filename : null;

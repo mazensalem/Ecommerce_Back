@@ -26,7 +26,7 @@ exports.searchProducts = async (req, res) => {
 
 exports.getProduct = async (req, res, next) => {
     const id = req.params.id;
-    const product = await Product.findById(id).populate('catagory');
+    const product = await Product.findById(id).populate(['catagory', 'subCatagory']);
     if (!product) {
         return next(new AppError("this product is not found", 404));
     }
@@ -67,12 +67,16 @@ exports.editProduct = async (req, res, next) => {
 
 
 exports.setNewArrivals = async (req, res, next) => {
-
+    const id = req.params.id;
+    const product = await Product.findByIdAndUpdate(id, {newArrivals: true}, {returnDocument: 'after'});
+    res.status(200).json({msg: "Product set", data: product});
 }
 
 
 exports.setMostPopular = async (req, res, next) => {
-
+    const id = req.params.id;
+    const product = await Product.findByIdAndUpdate(id, {mostPopular: true}, {returnDocument: 'after'});
+    res.status(200).json({msg: "Product set", data: product});
 }
 
 
