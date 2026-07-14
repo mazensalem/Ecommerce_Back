@@ -45,6 +45,7 @@ exports.loginCheck = async (req, res, next) => {
         const data = jwt.verify(token, process.env.SECRETE_KEY);
         const user = await User.findById(data._id);
         req.user = user;
+        if (!req.user) {return next(new AppError('you must be logged in', 401))}
         next();
     }catch (err){
         next(new AppError("this token is invalid or expired", 401));

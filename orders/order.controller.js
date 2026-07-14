@@ -33,7 +33,7 @@ exports.createOrder = async (req, res, next) => {
     }
     
     const cart = await Cart.findOne({userId}).populate('products.productId');
-    if (!cart.products){
+    if (!cart.products.length){
         return next(new AppError('no product found', 404));
     }
 
@@ -76,3 +76,36 @@ exports.createOrder = async (req, res, next) => {
         return next(new AppError('something is wrong'), 500);
     }
 }
+
+exports.getOrder = async (req, res, next) => {
+    const orderId = req.params.id;
+    const userId = req.user._id;
+    const order = await Order.findOne({userId, _id: orderId});
+    if (!order){
+        return next(new AppError("this order is not found", 404));
+    }
+    res.status(200).json({msg: 'single order', data: order});
+}
+
+exports.setOrderStatus = async (req, res, next) => {
+    const orderId = req.params.id;
+    if (!orderId){
+        return next(new AppError('no order provided', 404));
+    }
+    const {status} = req.body;
+    const order = await Order.findByIdAndUpdate(orderId, {status}, {new: true});
+    res.status(200).json({msg: 'order updatad', data: order});
+}
+
+exports.cancelOrder = async (req, res, next) =>{
+    const userId = req.user._id;
+    const orderId = req.params.id;
+    const orderOld = await Order.findOne({userId, _id: orderId});
+    if (orderOld && orderOld.status == 'Pendding'){
+        const order = await Order.findOneAndUpdate({userId, _id: orderId}, {status: 'Canceled by user'}, {new: true});
+        res.status(200).json({msg: "canceled", data: order});
+    } else {
+        next(new AppError("you can't cancel this order", 400));
+    }
+}
+
