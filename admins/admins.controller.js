@@ -53,7 +53,7 @@ exports.addAdmin = async (req, res) => {
 
 exports.getAllAdmins = async (req, res) => {
     const admins = await Admin.find({isDeleted: false});
-    res.status(200).json({"msg": "admins", data: admins});
+    res.status(200).json({"msg": admins.length, data: admins});
 }
 
 

@@ -12,8 +12,28 @@ exports.getOrders = async (req, res) => {
 }
 
 exports.getAllOrders = async (req, res) => {
-    const orders = await Order.find();
-    res.status(200).json({msg: 'all orders', data: orders});
+    const ordersPerPage = 10;
+    const {status, date, page} = req.query;
+    const totalOrders = await Order.aggregate([{$group: {_id: null, count: {$sum: 1}}}]);
+    const filter = {};
+    if (status) { 
+        if (status == 'Cancelled'){
+            filter.$or = [{status: {$regex: /^Canceled/}}, {status: 'Rejected'}]
+        }else{
+            filter['status'] = status; 
+        }
+    }
+    if (date) {
+        const start = new Date(date); start.setHours(0, 0, 0, 0);
+        const end = new Date(date); end.setHours(23, 59, 59, 999);
+        filter['createdAt'] = {$gte: start, $lte: end}; 
+    }
+
+    Order.find({
+        
+    })
+    const orders = await Order.find(filter).populate('userId').populate('products.productId').skip((page - 1) * ordersPerPage).limit(ordersPerPage);
+    res.status(200).json({msg: totalOrders[0].count, data: orders});
 }
 
 

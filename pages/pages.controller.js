@@ -17,9 +17,9 @@ exports.createPage = async (req, res, next) => {
 }
 
 exports.editPage = async (req, res, next) => {
-    const slug = req.params.slug;
-    const {title, content, nSlug, active} = req.body;
-    const page = await Pages.pages.findOneAndUpdate({slug}, {title, content, slug: nSlug, active}, {new: true});
+    const Oslug = req.params.slug;
+    const {title, content, slug, active} = req.body;
+    const page = await Pages.pages.findOneAndUpdate({slug: Oslug}, {title, content, slug, active}, {new: true});
     res.status(200).json({msg: 'page edited', data: page});
 }
 
@@ -46,11 +46,30 @@ exports.setTestStatus = async (req, res, next) => {
 
 
 exports.getTests = async (req, res, next) => {
-    const Tests = await Pages.testimonial.find({});
+    const {status, page} = req.query;
+    let Tests;
+    if (status){
+        Tests = await Pages.testimonial.find({status}).skip((page-1) * 5).limit(5);
+    }else{
+        Tests = await Pages.testimonial.find({}).skip((page-1) * 5).limit(5);
+    }
     res.status(200).json({msg: 'got', data: Tests});
 }
 
 exports.getApprovedTests = async (req, res, next) => {
     const Tests = await Pages.testimonial.find({status: 'approved'});
     res.status(200).json({msg: 'got', data: Tests});
+}
+
+
+exports.getTestStats = async (req, res) => {
+    const data = await Pages.testimonial.aggregate([
+        {
+            $group: {
+                _id: '$status',
+                count: {$sum: 1}
+            }
+        }
+    ])
+    res.status(200).json({msg: 'stats', data});
 }

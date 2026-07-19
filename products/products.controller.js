@@ -4,9 +4,29 @@ const fs = require('fs');
 const path = require('path');
 
 exports.getProducts = async (req, res) => {
-    const products = await Product.find({isDeleted: false});
+    const productsPerPage = 10;
+    const {page, active, category} = req.query;
+    const filters = {isDeleted: false};
+    
+    if (category && category != 'ALL') {filters['catagory'] = category;}
+    if (active &&  active != 0) {filters['isActive'] = (active > 0);}
+    
 
-    res.status(200).json({msg: "all products", data: products});
+    const products = await Product.find(filters)
+    .populate(['catagory', 'subCatagory'])
+    .skip((page - 1) * productsPerPage)
+    .limit(productsPerPage);
+    
+    const totalProductsCount = await Product.aggregate([
+        {
+            $group: {
+                _id: null,
+                count: {$sum: 1}
+            }
+        }
+    ]);
+
+    res.status(200).json({msg: `${totalProductsCount[0].count}`, data: products});
 }
 
 exports.searchProducts = async (req, res) => {
@@ -22,6 +42,12 @@ exports.searchProducts = async (req, res) => {
 
     const products = await Product.find(fileter);
     res.status(200).json({msg: "search results", data: products});
+}
+
+exports.bestSeller = async (req, res) => {
+    const products = await Product.find({isActive: true, isDeleted: false, mostPopular: true}).populate(['subCatagory', 'catagory'])
+    
+    res.status(200).json({msg: 'popular products', data: products});
 }
 
 exports.getProduct = async (req, res, next) => {

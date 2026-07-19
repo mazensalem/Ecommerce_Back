@@ -48,8 +48,15 @@ exports.editSubCatagory = async (req, res, next) => {
 
 exports.deleteSubCatagory = async (req, res, next) => {
     const id = req.params.id;
-    const subCatagory = await SubCatagory.findByIdAndUpdate(id, {isDeleted: true});
+    const subCatagory = await SubCatagory.findByIdAndUpdate(id, {isDeleted: true, slug: Date.now()});
     if (!subCatagory){return next(new AppError("This sub catagory is not found", 404));}
     await fs.promises.rm(path.join(__dirname, '../uploads', subCatagory.imgUrl));
     res.status(200).json({msg: "deleted", data: null});
+}
+
+
+exports.getSubCategoriesUnder = async (req, res, next) => {
+    const id = req.params.id;
+    const subCatagories = await SubCatagory.find({catagoryId: id, isDeleted: false});
+    res.status(200).json({msg: 'sub catagores', data: subCatagories})
 }
