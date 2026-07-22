@@ -38,10 +38,10 @@ exports.searchProducts = async (req, res) => {
     if (catagory) {fileter['catagory'] = catagory;}
     if (subCatagory) {fileter['subCatagory'] = subCatagory;}
     if (priceMin) {fileter['price']['$gte'] = priceMin;}
-    if (priceMax) {filter['price']['$lte'] = priceMax;}
+    if (priceMax) {fileter['price']['$lte'] = priceMax;}
 
     const products = await Product.find(fileter);
-    res.status(200).json({msg: "search results", data: products});
+    res.status(200).json({msg: products.length, data: products});
 }
 
 exports.bestSeller = async (req, res) => {
@@ -51,8 +51,8 @@ exports.bestSeller = async (req, res) => {
 }
 
 exports.getProduct = async (req, res, next) => {
-    const id = req.params.id;
-    const product = await Product.findById(id).populate(['catagory', 'subCatagory']);
+    const slug = req.params.slug;
+    const product = await Product.findOne({slug}).populate(['catagory', 'subCatagory']);
     if (!product) {
         return next(new AppError("this product is not found", 404));
     }

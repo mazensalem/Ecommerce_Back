@@ -36,7 +36,7 @@ exports.addProduct = async (req, res) => {
 
 exports.getCart = async (req, res) => {
     const userId = req.user._id;
-    const cart = await Cart.findOne({userId}).populate('products.productId', ['title', 'price', 'stock', 'isActive']);
+    const cart = await Cart.findOne({userId}).populate('products.productId', ['title', 'price', 'stock', 'isActive', 'imgUrl']);
     res.status(200).json({msg: "cart", data: cart});
 }
 

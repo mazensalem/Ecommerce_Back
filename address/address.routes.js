@@ -7,7 +7,7 @@ router.get('/', loginCheck, getAddress);
 router.get('/default', loginCheck, getDefaultAddress);
 router.get('/:id', loginCheck, getSingleAddress)
 router.post('/', loginCheck, createAddress);
-router.patch('/:id', loginCheck, updateAddresss);
+router.put('/:id', loginCheck, updateAddresss);
 router.delete('/:id', loginCheck, deleteAddress)
 
 module.exports = router;

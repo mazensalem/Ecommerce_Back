@@ -7,7 +7,7 @@ const catchAsync = require('../utils/catchAsync.utilite');
 router.post('/signup', checkEmail, catchAsync(signup));
 router.post('/login', login);
 router.get('/profile', loginCheck, profile);
-router.patch('/profile', loginCheck, editprofile);
-router.patch('/changepassword', loginCheck, changePassword)
+router.put('/profile', loginCheck, editprofile);
+router.put('/changepassword', loginCheck, changePassword)
 
 module.exports = router;

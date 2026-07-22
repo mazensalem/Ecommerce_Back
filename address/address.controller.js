@@ -43,6 +43,7 @@ exports.updateAddresss = async (req, res, next) => {
         const {title, address, phone, isDefault} = req.body;
         if (isDefault){await Address.findOneAndUpdate({user: req.user._id, isDefault: true}, {isDefault: false}, {session});}
         const userAddress = await Address.findOneAndUpdate({_id: id, user: req.user._id, isDeleted: false}, {title, address, phone, isDefault}, {returnDocument: "after", session});
+        await session.commitTransaction();
         await session.endSession();
         res.status(200).json({msg: "address updated", data: userAddress});
     } catch (err) {

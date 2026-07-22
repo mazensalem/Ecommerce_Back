@@ -11,7 +11,7 @@ router.get('/bestseller', bestSeller);
 router.post('/create', isAdminLoggedIn, multer.single('img'), addProduct);
 router.put('/edit/:id', isAdminLoggedIn, multer.single('img'), editProduct);
 router.delete('/delete/:id', isAdminLoggedIn, deleteProduct);
-router.get('/:id', getProduct);
+router.get('/:slug', getProduct);
 router.post('/setnewarrivals/:id', isAdminLoggedIn, setNewArrivals);
 router.post('/setmostpopular/:id', isAdminLoggedIn, setMostPopular);
 

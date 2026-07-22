@@ -35,11 +35,11 @@ app.use('/orders', require('./orders/order.routes'));
 app.use('/page', require('./pages/pages.routes'));
 app.use('/reports', require('./reports/reports.routes'));
 
-// const appError = require('./utils/appError.util');
-// app.use((req, res, next) => {
-//     next(new appError('This route is not available', 404));
-// })
-// app.use(require('./middlewares/errorHandler'));
+const appError = require('./utils/appError.util');
+app.use((req, res, next) => {
+    next(new appError('This route is not available', 404));
+})
+app.use(require('./middlewares/errorHandler'));
 
 
 

@@ -7,8 +7,20 @@ const mongoose = require('mongoose');
 
 exports.getOrders = async (req, res) => {
     const userId = req.user._id;
-    const orders = await Order.find({userId});
-    res.status(200).json({msg: 'orders', data: orders});
+    let limit = 10;
+    const status = req.query.status;
+    const page = req.query.page;
+    let orders;
+    if (req.query.limit){
+        limit = req.query.limit;
+    }
+
+    let filters = {};
+    filters['userId'] = userId;
+    if (status) { filters['status'] = status; }
+
+    orders = await Order.find(filters).sort('createdAt').skip((page-1)*limit).limit(limit);
+    res.status(200).json({msg: orders.length, data: orders});
 }
 
 exports.getAllOrders = async (req, res) => {
@@ -43,7 +55,7 @@ exports.createOrder = async (req, res, next) => {
     let userAddress;
     if (addressId){
         userAddress = await Address.findById(addressId);
-        if (userAddress.user != userId) { return next(new AppError("this address isn't valid", 400)); }
+        if (userAddress.user.toString() != userId.toString()) { return next(new AppError("this address isn't valid", 400)); }
     }else{
         userAddress = await Address.findOne({isDefault: true, user: userId});
     }
